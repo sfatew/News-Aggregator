@@ -46,9 +46,8 @@ public class TestWebCrawling {
         }
     }
 
-
     public static void main(String[] args) {
-        String url = "https://www.researchgate.net";
+        String url = "https://cointelegraph.com/tags/blockchain";
         crawl(1, url, new ArrayList<String>());
     }
 }
