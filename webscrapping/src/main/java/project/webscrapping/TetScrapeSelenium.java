@@ -2,7 +2,7 @@ package project.webscrapping;
 
 
 import java.io.*;
-
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,11 +16,14 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class TetScrapeSelenium {
 
-    private final static int itemTargetCount = 1000;
+    private static int scrollLimit = 20;
 
     public static JSONArray parseringArray(File f){
         JSONParser jsonParser = new JSONParser();
@@ -41,8 +44,8 @@ public class TetScrapeSelenium {
         return jsonArray;
     }
 
-    public static int getItemtargetcount() {
-        return itemTargetCount;
+    public static int getsScrollLimit() {
+        return scrollLimit;
     }
 
     
@@ -66,42 +69,57 @@ public class TetScrapeSelenium {
         Object lastHeight = js.executeScript("return document.body.scrollHeight");
         System.out.println(lastHeight);
 
-        while (itemTargetCount > articles.size()) {
+        int scrollCounter = 0;
+
+        while (scrollLimit > scrollCounter) {
 
             System.out.println(".");
 
             js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
 
-            try {
-                Thread.sleep(2);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            // try {
+            //     Thread.sleep(100 );
+            // } catch (InterruptedException e) {
+            //     // TODO Auto-generated catch block
+            //     e.printStackTrace();
+            // }
+
+            Wait<WebDriver> wait = new WebDriverWait(browser, Duration.ofSeconds(30));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".btn__icon.posts-listing__more-icon")));
 
             Object newHeight = js.executeScript("return document.body.scrollHeight");
+            System.out.println(newHeight);
 
-            if (newHeight == lastHeight){
+            if (newHeight == (lastHeight) ){
                 System.out.println("..");
                 break;
             }
+
             lastHeight = newHeight;
 
-            articles.addAll(browser.findElements(By.className("post-card-inline"))) ; 
-        
-            // System.out.println(articles.size());
-
-            for (WebElement ar : articles){
-                // System.out.println(ar.getText());
-                JSONObject content = new JSONObject();
-                content.put("title", ar.findElement(By.className("post-card-inline__title")).getText());
-                jsonArray.add(content);
-
-            }
+            scrollCounter ++;
 
         }
 
+        articles.addAll(browser.findElements(By.className("post-card-inline"))) ; 
         
+        // System.out.println(articles.size());
+
+        for (WebElement ar : articles){
+            // System.out.println(ar.getText());
+            JSONObject content = new JSONObject();
+            content.put("url", ar.findElement(By.cssSelector("a")).getAttribute("href"));
+            content.put("title", ar.findElement(By.className("post-card-inline__title")).getText());
+            content.put("author", ar.findElement(By.className("post-card-inline__author")).getText());
+            content.put("summary", ar.findElement(By.className("post-card-inline__text")).getText());
+            content.put("date", ar.findElement(By.cssSelector("time")).getAttribute("datetime"));
+
+            // content.put("all", ar.getText());
+            
+            jsonArray.add(content);
+
+        }
+
         try {
             FileWriter file = new FileWriter(f);
             file.write(jsonArray.toJSONString());
@@ -112,7 +130,7 @@ public class TetScrapeSelenium {
             e.printStackTrace();
         }
 
-        System.out.println("added to JSON file: "+ jsonArray);
+        System.out.println("added to JSON file: " + jsonArray.size());
 
 
         browser.quit();

@@ -1,5 +1,5 @@
 package project.webscrapping;
 
-public class WriteJSON {
-    
+public class twitterAPI {
+
 }
