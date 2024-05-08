@@ -1,4 +1,4 @@
-package project.webscrapping;
+package project.datacollecting;
 
 import java.io.*;
 import java.time.Duration;
