@@ -1,4 +1,4 @@
-package project.webscrapping;
+package project.datacollecting;
 
 import static org.junit.Assert.assertTrue;
 

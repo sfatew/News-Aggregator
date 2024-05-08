@@ -1,4 +1,4 @@
-package project.webscrapping;
+package project.datacollecting;
 
 public class twitterAPI {
 
