@@ -6,24 +6,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class SearchingController {
 
 	private ObservableList<String> listPresent = FXCollections.observableArrayList();
+	private ObservableList<ObservableList<String>> listDetailPresent = FXCollections.observableArrayList();
 
 	@FXML
 	private TextField myTextField;
 
 	@FXML
 	private ListView<String> myListView;
+
+	@FXML
+	private Text title = new Text();
 
 	public void search(ActionEvent e) throws IOException, InterruptedException {
 		CallingAPISearchEngingJSONRead searchEngine = new CallingAPISearchEngingJSONRead();
@@ -38,23 +41,45 @@ public class SearchingController {
 		if (listPresent != null) {
 			listPresent.removeAll(listPresent);
 		}
+
 		listPresent = searchEngine.getListPresent();
 		myListView.setItems(listPresent);
 		myListView.setVisible(true);
+
+		listDetailPresent = searchEngine.getListDetailPresent();
 
 	}
 
 	@FXML
 	public void displaySelectedArticle(MouseEvent e) {
 		try {
-			Text title = new Text();
+			int indexOfList = myListView.getSelectionModel().getSelectedIndex();
 
 			Stage newStage = new Stage();
-			Parent root = FXMLLoader.load(getClass().getResource("InformationDisplay.fxml"));
-			Scene scene = new Scene(root);
+
+			String tt = listDetailPresent.get(indexOfList).get(7);
+			Text title = new Text(tt);
+
+			Text idList = new Text(String.valueOf(indexOfList));
+//			title.setFont(Font.font("Palatino", 45));
+//			title.setWrappingWidth(600);
+//			title.setStyle("-fx-underline: true;");
+
+//			Text tags = new Text("Tags: " + listDetailPresent.get(indexOfList).get(10));
+
+			AnchorPane root = new AnchorPane();
+			root.getChildren().addAll(title, idList);
+
+			AnchorPane.setTopAnchor(title, 40.0);
+			AnchorPane.setLeftAnchor(title, 30.0);
+
+			AnchorPane.setTopAnchor(idList, 40.0);
+			AnchorPane.setLeftAnchor(idList, 700.0);
+
+			Scene scene = new Scene(root, 900, 600);
 
 			newStage.setScene(scene);
-			newStage.setTitle("New Stage");
+			newStage.setTitle("Detail");
 			newStage.show();
 		} catch (Exception e2) {
 			e2.printStackTrace();
