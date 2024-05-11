@@ -9,8 +9,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class CallingAPISearchEngingJSONRead {
-//	private final String BASE_URL = "https://vtqn-search-engine-75080fd33305.herokuapp.com/search=";
+	private final String BASE_URL = "https://vtqn-search-engine-75080fd33305.herokuapp.com/search=";
+	private String present = "";
+	private ObservableList<String> listPresent = FXCollections.observableArrayList();
+//	private ObservableList<String> listDetailPresent = FXCollections.observableArrayList();
 
 	public String getJSONFromURL(String strUrl) {
 		String jsonText = "";
@@ -38,14 +44,15 @@ public class CallingAPISearchEngingJSONRead {
 	}
 
 	public void getResponse(String query) {
-		String strJson = getJSONFromURL(
-				"https://vtqn-search-engine-75080fd33305.herokuapp.com/search=" + query + "/100/0");
+		String strJson = getJSONFromURL(BASE_URL + query + "/5/0");
 		try {
 			JSONParser parser = new JSONParser();
 			Object object = parser.parse(strJson);
 			JSONArray mainArrayJsonObject = (JSONArray) object;
 
 			for (int i = 0; i < mainArrayJsonObject.size(); i++) {
+				present = present + (i + 1) + ". ";
+
 				JSONObject jsonResult = (JSONObject) mainArrayJsonObject.get(i);
 				System.out.println("RESULT " + (i + 1) + " :");
 
@@ -92,10 +99,18 @@ public class CallingAPISearchEngingJSONRead {
 				String articleLink = (String) source.get("article_link");
 				System.out.println("	article_link : " + articleLink);
 
+				present = present + title + "\t\t" + author + "\t\t" + date;
+				listPresent.add(present);
+				present = "";
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public ObservableList<String> getListPresent() {
+		return listPresent;
 	}
 
 	public static void main(String[] args) {
