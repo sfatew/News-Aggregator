@@ -45,7 +45,7 @@ public class CallingAPISearchEngingJSONRead {
 	}
 
 	public void getResponse(String query) {
-		String strJson = getJSONFromURL(BASE_URL + query + "/5/0");
+		String strJson = getJSONFromURL(BASE_URL + query + "/100/0");
 		try {
 			JSONParser parser = new JSONParser();
 			Object object = parser.parse(strJson);
@@ -60,15 +60,15 @@ public class CallingAPISearchEngingJSONRead {
 
 				String index = (String) jsonResult.get("_index");
 //				System.out.println("index : " + index);
-				items.add(index);
+				items.add(index); // 0
 
 				String type = (String) jsonResult.get("_type");
 //				System.out.println("type : " + type);
-				items.add(type);
+				items.add(type); // 1
 
 				String id = (String) jsonResult.get("_id");
 //				System.out.println("id : " + id);
-				items.add(id);
+				items.add(id); // 2
 
 				double score = (double) jsonResult.get("_score");
 //				System.out.println("score : " + score);
@@ -78,43 +78,43 @@ public class CallingAPISearchEngingJSONRead {
 
 				String summary = (String) source.get("summary");
 //				System.out.println("	summary : " + summary);
-				items.add(summary);
+				items.add(summary); // 3
 
 				String date = (String) source.get("date");
 //				System.out.println("	date : " + date);
-				items.add(date);
+				items.add(date); // 4
 
 				String postCover = (String) source.get("post_cover");
 //				System.out.println("	Post_cover : " + postCover);
-				items.add(postCover);
+				items.add(postCover); // 5
 
 				String author = (String) source.get("author");
 //				System.out.println("	author : " + author);
-				items.add(author);
+				items.add(author); // 6
 
 				String title = (String) source.get("title");
 //				System.out.println("	title : " + title);
-				items.add(title);
+				items.add(title); // 7
 
 				String detailContent = (String) source.get("detailed_content");
 //				System.out.println("	detail content : " + detailContent);
-				items.add(detailContent);
+				items.add(detailContent); // 8
 
 				JSONArray categoryArray = (JSONArray) source.get("category");
 //				System.out.println("	categories: ");
-				String tags = "Tags: ";
+				String tags = " ";
 				for (int j = 0; j < categoryArray.size(); j++) {
 					String tagObject = (String) categoryArray.get(j);
 //					System.out.println("		" + tagObject);
 					tags = tags + "\t" + tagObject;
 				}
-				items.add(tags);
+				items.add(tags); // 9
 
 				String articleLink = (String) source.get("article_link");
 //				System.out.println("	article_link : " + articleLink);
-				items.add(articleLink);
+				items.add(articleLink); // 10
 
-				present = present + title + "\t\t" + author + "\t\t" + date;
+				present = present + title + "_" + author + "_" + date;
 				listPresent.add(present);
 				present = "";
 
@@ -135,6 +135,7 @@ public class CallingAPISearchEngingJSONRead {
 	}
 
 	public static void main(String[] args) {
+		ObservableList<ObservableList<String>> listDetailPresent = FXCollections.observableArrayList();
 
 	}
 }

@@ -8,9 +8,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -57,27 +61,80 @@ public class SearchingController {
 
 			Stage newStage = new Stage();
 
+			// Set title
 			String tt = listDetailPresent.get(indexOfList).get(7);
 			Text title = new Text(tt);
+//			Text idList = new Text(String.valueOf(indexOfList));
+			title.setFont(Font.font("Palatino", FontWeight.BOLD, 45));
+			title.setWrappingWidth(960);
+			title.setStyle("-fx-underline: true;");
 
-			Text idList = new Text(String.valueOf(indexOfList));
-//			title.setFont(Font.font("Palatino", 45));
-//			title.setWrappingWidth(600);
-//			title.setStyle("-fx-underline: true;");
+			// Tags
+			Text tags = new Text("Tags: " + listDetailPresent.get(indexOfList).get(9));
+			tags.setFont(Font.font("arial", 20));
 
-//			Text tags = new Text("Tags: " + listDetailPresent.get(indexOfList).get(10));
+			// Author
+			Text author = new Text("Author: " + listDetailPresent.get(indexOfList).get(6));
+			author.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, FontPosture.ITALIC, 18));
 
-			AnchorPane root = new AnchorPane();
-			root.getChildren().addAll(title, idList);
+			// Date
+			Text date = new Text(listDetailPresent.get(indexOfList).get(4));
+			date.setFont(Font.font("Arial", FontWeight.MEDIUM, FontPosture.ITALIC, 18));
 
-			AnchorPane.setTopAnchor(title, 40.0);
+			// Summary
+			Text summary = new Text("\t" + listDetailPresent.get(indexOfList).get(3));
+			summary.setWrappingWidth(900);
+			summary.setFont(Font.font("Arial", FontWeight.THIN, FontPosture.ITALIC, 18));
+
+			// Detail
+			Text detail = new Text(listDetailPresent.get(indexOfList).get(8));
+			detail.setWrappingWidth(900);
+			detail.setFont(Font.font("\t" + "Arial", 22));
+
+			// link
+			Text link = new Text(listDetailPresent.get(indexOfList).get(10));
+
+			// Get object for anchorPane
+			AnchorPane anchorPane = new AnchorPane();
+			anchorPane.getChildren().addAll(title, tags, author, date, summary, detail, link);
+
+			// Set position of title
+			AnchorPane.setTopAnchor(title, 50.0);
 			AnchorPane.setLeftAnchor(title, 30.0);
 
-			AnchorPane.setTopAnchor(idList, 40.0);
-			AnchorPane.setLeftAnchor(idList, 700.0);
+			// Set position of tags
+			AnchorPane.setTopAnchor(tags, 20.0);
+			AnchorPane.setLeftAnchor(tags, 30.0);
 
-			Scene scene = new Scene(root, 900, 600);
+			// set position of author
+			AnchorPane.setTopAnchor(author, AnchorPane.getTopAnchor(title) + title.getLayoutBounds().getHeight() + 10);
+			AnchorPane.setLeftAnchor(author, 30.0);
 
+			// set position of date
+			AnchorPane.setTopAnchor(date, AnchorPane.getTopAnchor(title) + title.getLayoutBounds().getHeight() + 10);
+			AnchorPane.setLeftAnchor(date, AnchorPane.getLeftAnchor(author) + author.getLayoutBounds().getWidth() + 30);
+
+			// set position of summary
+			AnchorPane.setTopAnchor(summary,
+					AnchorPane.getTopAnchor(author) + author.getLayoutBounds().getHeight() + 20);
+			AnchorPane.setLeftAnchor(summary, 30.0);
+
+			// set position of detail
+			AnchorPane.setTopAnchor(detail,
+					AnchorPane.getTopAnchor(summary) + summary.getLayoutBounds().getHeight() + 20);
+			AnchorPane.setLeftAnchor(detail, 30.0);
+
+			// set position of link
+			AnchorPane.setTopAnchor(link, AnchorPane.getTopAnchor(detail) + detail.getLayoutBounds().getHeight() + 20);
+			AnchorPane.setLeftAnchor(link, 30.0);
+
+			ScrollPane root = new ScrollPane();
+			root.setContent(anchorPane);
+
+			// Create scene
+			Scene scene = new Scene(root, 1000, 700);
+
+			newStage.setResizable(false);
 			newStage.setScene(scene);
 			newStage.setTitle("Detail");
 			newStage.show();
