@@ -90,7 +90,7 @@ public class cointelegraphScraper {
 
         seleniumHelper.writeJSON(jsonArray, f);
 
-        newBrowser.close();
+        newBrowser.quit();
         
         browser.quit();
     }

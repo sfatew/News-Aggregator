@@ -1,7 +1,7 @@
 package project.datacollecting;
 
 import java.io.*;
-
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,12 +10,18 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Proxy;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class seleniumHelper {
@@ -39,9 +45,10 @@ public class seleniumHelper {
     public static List<String> scrapeMultiSimilarEleCSS(WebDriver browser, String cssselector){
 
         List<WebElement> web_eles = new LinkedList<>();
-        web_eles.addAll(browser.findElements(By.cssSelector(cssselector)));
 
         List<String> eles = new LinkedList<>();
+
+        web_eles.addAll(browser.findElements(By.cssSelector(cssselector)));
 
         for (WebElement ele : web_eles){
             eles.add(ele.getText());
@@ -53,13 +60,23 @@ public class seleniumHelper {
     public static List<String> scrapeMultiSimilarEleClass(WebDriver browser, String className){
 
         List<WebElement> web_eles = new LinkedList<>();
-        web_eles.addAll(browser.findElements(By.className(className)));
 
         List<String> eles = new LinkedList<>();
+       
+
+        web_eles.addAll(browser.findElements(By.className(className)));
+        System.out.println(web_eles.size());
 
         for (WebElement ele : web_eles){
+            try {
             eles.add(ele.getText());
+            System.out.println("__");
+            } catch (StaleElementReferenceException e) {
+                System.out.println("stale");
+                continue;
+            }
         }
+
 
         return eles;
     }
@@ -150,6 +167,48 @@ public class seleniumHelper {
     }
 
     
+    /** 
+     * @param browser
+     * @param clickLimit
+     * @param loadButtonLocation   : using xpath
+     */
+    public static void click2Load(WebDriver browser, int clickLimit, String loadButtonLocation){
+
+        int clickCounter = 0;
+        while (clickLimit > clickCounter){
+
+            try {
+                seleniumHelper.clickOn(browser, loadButtonLocation);
+            } catch (ElementClickInterceptedException e) {
+                JavascriptExecutor js = (JavascriptExecutor) browser;
+                js.executeScript("window.scrollTo(0, document.documentElement.scrollHeight)");  
+                System.out.println(js.executeScript("return document.documentElement.scrollHeight"));
+                try {
+                    Thread.sleep(7000);
+                } catch (InterruptedException ex) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                            
+            } catch (NoSuchElementException e2){
+                break;
+            }
+
+            System.out.println("!");
+
+            clickCounter ++;
+        }
+
+    }
+
+
+    public static void clickOn(WebDriver browser, String loadButtonLocation){
+
+        Wait<WebDriver> wait = new WebDriverWait(browser, Duration.ofSeconds(20));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(loadButtonLocation))).click();
+
+    }
+
     /** 
      * @param proxyAddress
      * @param proxyPort

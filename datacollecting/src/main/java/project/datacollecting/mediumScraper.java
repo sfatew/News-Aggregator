@@ -64,8 +64,6 @@ public class mediumScraper {
         List<WebElement> articles = new LinkedList<WebElement>(); 
 
         File f = new File("C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\data\\output_medium.json");
-
-
         JSONArray jsonArray = seleniumHelper.parseringArray(f);
 
 
