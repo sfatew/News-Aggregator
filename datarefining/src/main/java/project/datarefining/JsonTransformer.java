@@ -23,7 +23,7 @@ public class JsonTransformer {
         return articles;
     }
 
-    private static List<Article> readArticlesFromFile(String filePath) throws IOException {
+    public static List<Article> readArticlesFromFile(String filePath) throws IOException {
         List<Article> articles = new ArrayList<>();
         Gson gson = new Gson();
 

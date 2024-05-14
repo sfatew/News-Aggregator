@@ -57,7 +57,7 @@ public class cointelegraphScraper {
         JSONArray jsonArray = seleniumHelper.parseringArray(f);
 
 
-        seleniumHelper.scroll(browser, 20);
+        seleniumHelper.scroll(browser, 100);
 
 
         List<WebElement> articles = new LinkedList<WebElement>();

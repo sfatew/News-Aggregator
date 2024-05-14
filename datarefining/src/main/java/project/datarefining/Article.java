@@ -3,9 +3,16 @@ package project.datarefining;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.json.simple.parser.ParseException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
+import static project.datarefining.JsonTransformer.readArticlesFromFile;
 
 public class Article {
 
@@ -104,6 +111,10 @@ public class Article {
         this.creation_date = creation_date;
     }
 
+    private static final String TARGET_DATE_FORMAT = "yyyy-MM-dd";
+    private static final int SIMILARITY_THRESHOLD = 80; // Adjust based on desired strictness
+
+
     public static Article fromJsonObject(JsonObject jsonObject) {
         Article article = new Article();
         if (jsonObject.has("url")) {
@@ -139,6 +150,59 @@ public class Article {
         if (jsonObject.has("author")) {
             article.setAuthor(jsonObject.get("author").getAsString());
         }
+
+        if (jsonObject.has("date")) {
+            String dateString = jsonObject.get("date").getAsString();
+            try {
+                // Parse date based on website source's format (replace with your logic)
+                SimpleDateFormat sourceDateFormat;
+                switch (websiteSource) {
+                    case "Cointelegraph":
+                        sourceDateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Assuming known format
+                        break;
+                    case "Wired":
+                        sourceDateFormat = new SimpleDateFormat("MM.dd.yyyy"); // Assuming known format
+                        break;
+                    case "Medium":
+                        sourceDateFormat = new SimpleDateFormat("MMM dd, yyyy"); // Assuming known format
+                        break;
+                    default:
+                        // Handle unknown website source format (e.g., log error)
+                        System.err.println("Unknown date format for website: " + websiteSource);
+                        return article; // Or throw an exception
+                }
+                Date parsedDate = sourceDateFormat.parse(dateString);
+
+                // Format the date to the target format
+                SimpleDateFormat targetDateFormat = new SimpleDateFormat(TARGET_DATE_FORMAT);
+                String formattedDate = targetDateFormat.format(parsedDate);
+                article.setCreation_date(formattedDate);
+            } catch (java.text.ParseException e) {
+                // Handle parsing exception (e.g., invalid date format, logging error)
+                System.err.println("Error parsing date for " + websiteSource + ": " + dateString);
+            }
+        }
+
+        String url = article.getArticle_link();
+        List<Article> articles = JsonTransformer.readArticlesFromFile(filePath);
+        if (processedUrls.contains(url)) {
+            System.out.println("Skipping duplicate article: " + url);
+            return null; // Or perform some other action (e.g., logging)
+        }
+        processedUrls.add(url);
+
+        String title = article.getTitle();
+        for (Article existingArticle : articles) {  // Replace with your existing article storage logic
+            int distance = StringUtils.getLevenshteinDistance(title, existingArticle.getTitle());
+            int titleLength = Math.max(title.length(), existingArticle.getTitle().length());
+            double similarity = (1.0 - (double) distance / titleLength) * 100;
+            if (similarity >= SIMILARITY_THRESHOLD) {
+                System.out.println("Found potential duplicate: " + url + " (similar to " + existingArticle.getArticle_link() + ")");
+                // You can decide how to handle potential duplicates here (e.g., ignore, log, compare further)
+                return null; // Or perform some other action (e.g., return existing article)
+            }
+        }
+
         return article;
     }
 
@@ -171,9 +235,9 @@ public class Article {
     // Add a method to determine article type based on member 2's logic (replace with actual implementation)
     private static String determineArticleType(String websiteSource) {
         if (websiteSource.equals("Cointelegraph") || websiteSource.equals("Wired")) {
-            return "News";
+            return "News Article";
         } else if (websiteSource.equals("Medium")) {
-            return "Blog";
+            return "Blog Post";
         } else {
             return "Unknown"; // Default article type
         }
