@@ -110,6 +110,10 @@ public class Article {
             article.setArticle_link(jsonObject.get("url").getAsString());
         }
         // Extract website source from filename
+        // Get filename using StackTrace
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        String filename = stackTraceElements[1].getFileName(); // Second element is usually the calling class
+        assert filename != null;
         String websiteSource = extractWebsiteSourceFromFilename(filename);
         article.setWebsite_source(websiteSource);
         // Fill in logic to determine article type based on member 2's logic (replace 2 with appropriate value)
