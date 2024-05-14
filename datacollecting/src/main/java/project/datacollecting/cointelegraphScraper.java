@@ -13,7 +13,11 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class cointelegraphScraper {
+import project.datacollecting.seleniumhelper.BrowserSetup;
+import project.datacollecting.seleniumhelper.LoadMore;
+import project.datacollecting.seleniumhelper.seleniumHelper;
+
+public class CointelegraphScraper {
 
     
     /** 
@@ -49,7 +53,7 @@ public class cointelegraphScraper {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
     
-        WebDriver browser = seleniumHelper.setUpEdgeBrowser();
+        WebDriver browser = BrowserSetup.setUpEdgeBrowser();
         browser.navigate().to("https://cointelegraph.com/tags/blockchain");
  
 
@@ -57,7 +61,7 @@ public class cointelegraphScraper {
         JSONArray jsonArray = seleniumHelper.parseringArray(f);
 
 
-        seleniumHelper.scroll(browser, 20);
+        LoadMore.scroll2Load(browser, 2);
 
 
         List<WebElement> articles = new LinkedList<WebElement>();
@@ -66,7 +70,7 @@ public class cointelegraphScraper {
         
         // System.out.println(articles.size());
 
-        WebDriver newBrowser = seleniumHelper.setUpEdgeBrowser();
+        WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser();
 
         for (WebElement ar : articles){
             // System.out.println(ar.getText());
@@ -82,9 +86,10 @@ public class cointelegraphScraper {
 
             // content.put("all", ar.getText());
             
-            jsonArray.add(content);
-
             scrapeCointelegraphArticles(newBrowser, link, content);
+
+            jsonArray.add(content);
+            
 
         }
 
