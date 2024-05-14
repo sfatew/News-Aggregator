@@ -10,9 +10,9 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        String filePath1 = "output_cointelegraph.json";   // Replace with actual file paths
-        String filePath2 = "output_medium.json";
-        String filePath3 = "output_wired.json";
+        String filePath1 = "data/output_cointelegraph.json";   // Replace with actual file paths
+        String filePath2 = "data/output_medium.json";
+        String filePath3 = "data/output_wired.json";
 
         List<Article> articles = JsonTransformer.transformArticles(filePath1, filePath2, filePath3);
 
@@ -20,7 +20,7 @@ public class Main {
         String finalJson = gson.toJson(articles);
 
         // Write the final JSON to a file (optional)
-        Writer writer = new FileWriter("final_articles.json");
+        Writer writer = new FileWriter("data/final_articles.json");
         writer.write(finalJson);
         writer.close();
 
