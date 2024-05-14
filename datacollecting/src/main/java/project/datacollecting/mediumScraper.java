@@ -19,7 +19,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class mediumScraper {
+import project.datacollecting.seleniumhelper.BrowserSetup;
+import project.datacollecting.seleniumhelper.LoadMore;
+import project.datacollecting.seleniumhelper.seleniumHelper;
+
+public class MediumScraper {
 
     @SuppressWarnings("unchecked")
     private static void scrapeMediumArticles(WebDriver newBrowser, String link, JSONObject content){
@@ -55,9 +59,10 @@ public class mediumScraper {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
     
-        EdgeOptions options = seleniumHelper.setProxy("209.146.104.56", 80);
+        EdgeOptions options = new EdgeOptions();
+        BrowserSetup.setProxy(options, "209.146.104.56", 80);
 
-        WebDriver browser = seleniumHelper.setUpEdgeBrowser(options);
+        WebDriver browser = BrowserSetup.setUpEdgeBrowser(options);
 
         browser.navigate().to("https://medium.com/tag/blockchain/recommended");
 
@@ -67,14 +72,14 @@ public class mediumScraper {
         JSONArray jsonArray = seleniumHelper.parseringArray(f);
 
 
-        seleniumHelper.scroll(browser, 10);
+        LoadMore.scroll2Load(browser, 10);
 
 
         articles.addAll(browser.findElements(By.cssSelector("article"))) ; 
         
         // System.out.println(articles.size());
 
-        WebDriver newBrowser = seleniumHelper.setUpEdgeBrowser(options);
+        WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser(options);
 
         for (WebElement ar : articles){
             // System.out.println(ar.getText());
@@ -102,9 +107,9 @@ public class mediumScraper {
 
             // content.put("all", ar.getText());
             
-            jsonArray.add(content);
-
             scrapeMediumArticles(newBrowser, link, content);
+            
+            jsonArray.add(content);
 
         }
 

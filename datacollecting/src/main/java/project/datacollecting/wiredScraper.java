@@ -14,9 +14,13 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import project.datacollecting.seleniumhelper.BrowserSetup;
+import project.datacollecting.seleniumhelper.LoadMore;
+import project.datacollecting.seleniumhelper.seleniumHelper;
 
 
-public class wiredScraper {
+
+public class WiredScraper {
 
     
     /** 
@@ -58,7 +62,7 @@ public class wiredScraper {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
     
-        WebDriver browser = seleniumHelper.setUpEdgeBrowser();
+        WebDriver browser = BrowserSetup.setUpEdgeBrowser();
         // browser.navigate().to("https://www.wired.com/search/?q=blockchain&sort=score+desc");
         browser.navigate().to("https://www.wired.com/search/?q=blockchain&sort=publishdate+desc");
  
@@ -66,7 +70,7 @@ public class wiredScraper {
         File f = new File("C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\data\\output_wired.json");
         JSONArray jsonArray = seleniumHelper.parseringArray(f);
 
-        seleniumHelper.click2Load(browser, 10, "//span[text()='More Stories']");
+        LoadMore.click2Load(browser, 10, "//span[text()='More Stories']");
 
 
         List<WebElement> articles_list = browser.findElements(By.className("summary-list__items"));
@@ -78,7 +82,7 @@ public class wiredScraper {
         }
         // System.out.println(articles.size());
 
-        WebDriver newBrowser = seleniumHelper.setUpEdgeBrowser();
+        WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser();
 
         for (WebElement ar : articles){
             // System.out.println(ar.getText());
@@ -110,10 +114,11 @@ public class wiredScraper {
 
             // content.put("all", ar.getText());
             
-            jsonArray.add(content);
-
             scrapeWiredArticles(newBrowser, link, content);
 
+            jsonArray.add(content);
+
+            
         }
 
         seleniumHelper.writeJSON(jsonArray, f);
