@@ -135,6 +135,6 @@ public class TwitterScraper {
 
         newBrowser.quit();
         
-        // browser.quit();
+        browser.quit();
     }
 }
