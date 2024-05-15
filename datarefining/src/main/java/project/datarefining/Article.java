@@ -3,16 +3,12 @@ package project.datarefining;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.json.simple.parser.ParseException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
-import static project.datarefining.JsonTransformer.readArticlesFromFile;
+import java.util.Set;
 
 public class Article {
 
@@ -115,14 +111,14 @@ public class Article {
     private static final int SIMILARITY_THRESHOLD = 80; // Adjust based on desired strictness
 
 
-    public static Article fromJsonObject(JsonObject jsonObject) {
+    public static Article fromJsonObject(JsonObject jsonObject, Set<String> processedUrls) {
         Article article = new Article();
         if (jsonObject.has("url")) {
             article.setArticle_link(jsonObject.get("url").getAsString());
         }
         // Extract website source from filename
-        // Get filename using StackTrace
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();   // Get filename using StackTrace
         String filename = stackTraceElements[1].getFileName(); // Second element is usually the calling class
         assert filename != null;
         String websiteSource = extractWebsiteSourceFromFilename(filename);
@@ -137,7 +133,7 @@ public class Article {
         if (jsonObject.has("tags")) {
             JsonElement tagsElement = jsonObject.get("tags");
             if (tagsElement.isJsonArray()) {
-                article.setTags(tagsElement.getAsJsonArray());
+                article.setTags(extractTags(tagsElement.getAsJsonArray()));
             } else {
                 // Handle the case where tags is a single string
                 List<String> tagsList = new ArrayList<>();
@@ -183,28 +179,17 @@ public class Article {
             }
         }
 
+        // Check for duplicate URL
         String url = article.getArticle_link();
-        List<Article> articles = JsonTransformer.readArticlesFromFile(filePath);
         if (processedUrls.contains(url)) {
-            System.out.println("Skipping duplicate article: " + url);
+            System.out.println("Skipping duplicate article (URL): " + url);
             return null; // Or perform some other action (e.g., logging)
         }
         processedUrls.add(url);
 
-        String title = article.getTitle();
-        for (Article existingArticle : articles) {  // Replace with your existing article storage logic
-            int distance = StringUtils.getLevenshteinDistance(title, existingArticle.getTitle());
-            int titleLength = Math.max(title.length(), existingArticle.getTitle().length());
-            double similarity = (1.0 - (double) distance / titleLength) * 100;
-            if (similarity >= SIMILARITY_THRESHOLD) {
-                System.out.println("Found potential duplicate: " + url + " (similar to " + existingArticle.getArticle_link() + ")");
-                // You can decide how to handle potential duplicates here (e.g., ignore, log, compare further)
-                return null; // Or perform some other action (e.g., return existing article)
-            }
-        }
-
         return article;
     }
+
 
     private void setTags(JsonArray asJsonArray) {
     }

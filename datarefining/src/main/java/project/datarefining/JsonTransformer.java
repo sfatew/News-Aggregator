@@ -8,7 +8,9 @@ import com.google.gson.stream.JsonReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class JsonTransformer {
 
@@ -16,14 +18,14 @@ public class JsonTransformer {
         List<Article> articles = new ArrayList<>();
 
         // Read JSON files from member 1
-        articles.addAll(readArticlesFromFile(filePath1));
-        articles.addAll(readArticlesFromFile(filePath2));
-        articles.addAll(readArticlesFromFile(filePath3));
+        articles.addAll(readArticlesFromFile(filePath1, new HashSet<String>())); // Create new processedUrls set
+        articles.addAll(readArticlesFromFile(filePath2, new HashSet<String>()));
+        articles.addAll(readArticlesFromFile(filePath3, new HashSet<String>()));
 
         return articles;
     }
 
-    public static List<Article> readArticlesFromFile(String filePath) throws IOException {
+    private static List<Article> readArticlesFromFile(String filePath, Set<String> processedUrls) throws IOException {
         List<Article> articles = new ArrayList<>();
         Gson gson = new Gson();
 
@@ -32,10 +34,14 @@ public class JsonTransformer {
         reader.close();
 
         for (JsonElement element : jsonArray) {
-            articles.add(Article.fromJsonObject(element.getAsJsonObject()));
+            Article article = Article.fromJsonObject(element.getAsJsonObject(), processedUrls);
+            if (article != null) {
+                articles.add(article);
+            }
         }
 
         return articles;
     }
 }
+
 
