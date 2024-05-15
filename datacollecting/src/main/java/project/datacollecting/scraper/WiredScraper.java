@@ -1,4 +1,4 @@
-package project.datacollecting;
+package project.datacollecting.scraper;
 
 
 import java.io.*;
@@ -16,62 +16,33 @@ import org.openqa.selenium.WebElement;
 
 import project.datacollecting.seleniumhelper.BrowserSetup;
 import project.datacollecting.seleniumhelper.LoadMore;
-import project.datacollecting.seleniumhelper.seleniumHelper;
+import project.datacollecting.seleniumhelper.ScrapingHelper;
+import project.datacollecting.seleniumhelper.StoringHelper;
 
 
 
-public class WiredScraper {
+public class WiredScraper extends Scraper{
 
+    private int loadLimit;
     
-    /** 
-     * NOTE: Create a new web driver object to use this method
-     * @param newBrowser
-     * @param link
-     * @param content
-     */
-    @SuppressWarnings("unchecked")
-    private static void scrapeWiredArticles(WebDriver newBrowser, String link, JSONObject content){
-
-        System.out.println(link);
-
-        newBrowser.navigate().to(link);
-
-        try{
-            content.put("summary", newBrowser.findElement(By.cssSelector("div[class*='ContentHeaderDek']")).getText());
-        } catch (NoSuchElementException e) {
-            content.put("summary", null);
-
-        }
-
-        List<String> post_contents = seleniumHelper.scrapeMultiSimilarEleClass(newBrowser, "body__inner-container");
-
-        String post_content = "";
-        for (String p : post_contents){
-            post_content += p;
-        }
-
-        content.put("post_content", post_content);
-
-
-        List<String> tags = seleniumHelper.scrapeMultiSimilarEleCSS(newBrowser, "a[href^=\"/tag/\"]");
-        
-        content.put("tags", tags);
-
+    public WiredScraper(String articlesListUrl, String filePath, int loadLimit) {
+        super(articlesListUrl, filePath);
+        this.loadLimit = loadLimit;
     }
 
+
     @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
-    
+    @Override
+    public void scrapeArticlesList() {
+
         WebDriver browser = BrowserSetup.setUpEdgeBrowser();
-        // browser.navigate().to("https://www.wired.com/search/?q=blockchain&sort=score+desc");
-        browser.navigate().to("https://www.wired.com/search/?q=blockchain&sort=publishdate+desc");
+        browser.navigate().to(articlesListUrl);
  
 
-        File f = new File("C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\data\\output_wired.json");
-        JSONArray jsonArray = seleniumHelper.parseringArray(f);
+        File f = new File(filePath);
+        JSONArray jsonArray = StoringHelper.parseringArray(f);
 
-        LoadMore.click2Load(browser, 10, "//span[text()='More Stories']");
-
+        LoadMore.click2Load(browser, loadLimit, "//span[text()='More Stories']");
 
         List<WebElement> articles_list = browser.findElements(By.className("summary-list__items"));
 
@@ -114,17 +85,58 @@ public class WiredScraper {
 
             // content.put("all", ar.getText());
             
-            scrapeWiredArticles(newBrowser, link, content);
+            scrapeArticle(newBrowser, link, content);
 
             jsonArray.add(content);
 
             
         }
 
-        seleniumHelper.writeJSON(jsonArray, f);
+        StoringHelper.writeJSON(jsonArray, f);
 
         newBrowser.quit();
         
         browser.quit();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void scrapeArticle(WebDriver newBrowser, String link, JSONObject content) {
+        System.out.println(link);
+
+        newBrowser.navigate().to(link);
+
+        try{
+            content.put("summary", newBrowser.findElement(By.cssSelector("div[class*='ContentHeaderDek']")).getText());
+        } catch (NoSuchElementException e) {
+            content.put("summary", null);
+
+        }
+
+        List<String> post_contents = ScrapingHelper.scrapeMultiSimilarEleClass(newBrowser, "body__inner-container");
+
+        String post_content = "";
+        for (String p : post_contents){
+            post_content += p;
+        }
+
+        content.put("post_content", post_content);
+
+
+        List<String> tags = ScrapingHelper.scrapeMultiSimilarEleCSS(newBrowser, "a[href^=\"/tag/\"]");
+        
+        content.put("tags", tags);
+
+        
+    }
+
+
+    public int getLoadLimit() {
+        return loadLimit;
+    }
+
+
+    public void setLoadLimit(int loadLimit) {
+        this.loadLimit = loadLimit;
     }
 }

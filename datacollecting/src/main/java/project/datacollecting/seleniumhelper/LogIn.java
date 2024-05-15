@@ -1,6 +1,7 @@
 package project.datacollecting.seleniumhelper;
 
 import java.time.Duration;
+import java.util.Scanner;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -21,8 +22,18 @@ public class LogIn {
      * @param url   Log in page url
      * @return WebDriver
      */
-    public static WebDriver logInTwitter(String username, String password, WebDriver browser ){
+    public static WebDriver logInTwitter(WebDriver browser ){
         browser.navigate().to("https://twitter.com/i/flow/login");
+
+        Scanner scanner = new Scanner(System.in);
+        // Take user input for username and password
+        System.out.print("Enter your username: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+
+        scanner.close();
 
         //Find and input the username
 

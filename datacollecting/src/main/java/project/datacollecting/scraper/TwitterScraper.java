@@ -1,4 +1,4 @@
-package project.datacollecting;
+package project.datacollecting.scraper;
 
 
 import java.io.*;
@@ -18,74 +18,47 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import project.datacollecting.seleniumhelper.seleniumHelper;
+import project.datacollecting.seleniumhelper.StoringHelper;
 import project.datacollecting.seleniumhelper.BrowserSetup;
 import project.datacollecting.seleniumhelper.LoadMore;
 import project.datacollecting.seleniumhelper.LogIn;
+import project.datacollecting.seleniumhelper.ScrapingHelper;
 
 
 
-public class TwitterScraper {
+public class TwitterScraper extends Scraper{
 
-    
-    /** 
-     * NOTE: Create a new web driver object to use this method
-     * @param newBrowser
-     * @param link
-     * @param content
-     */
-    @SuppressWarnings("unchecked")
-    private static void scrapeTwitterPost(WebDriver newBrowser, String link, JSONObject content){
-
-        System.out.println(link);
-
-        newBrowser.navigate().to(link);
-
-        Wait<WebDriver> wait = new WebDriverWait(newBrowser, Duration.ofSeconds(20));
-        String author = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[data-testid='User-Name']"))).getText();
-        System.out.println(author);
-        content.put("author", author);
-
-
-        content.put("summary", null);
+    private int loadLimit;
      
-
-        String post_content = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[data-testid='tweetText']"))).getText();
-        content.put("post_content", post_content);
-
-        try {
-            List<String> tags = seleniumHelper.scrapeMultiSimilarEleCSS(newBrowser, "a[href^='/hashtag/']");
-            content.put("tags", tags);
-        } catch (NoSuchElementException e) {
-            content.put("tags", null);
-        }
-
+    public TwitterScraper(String articlesListUrl, String filePath, int loadLimit) {
+        super(articlesListUrl, filePath);
+        this.loadLimit = loadLimit;
     }
 
+
     @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
-    
+    @Override
+    public void scrapeArticlesList() {
         EdgeOptions options = new EdgeOptions();
         BrowserSetup.setAntiAutomateDetection(options);
 
         WebDriver browser = BrowserSetup.setUpEdgeBrowser(options);
-        LogIn.logInTwitter("ewpumpkin", "pumpkin124@142", browser);
-    
-        browser.navigate().to("https://twitter.com/search?q=blockchain&src=recent_search_click");
+        LogIn.logInTwitter(browser);
+        
+
+        browser.navigate().to(articlesListUrl);
  
 
-        File f = new File("C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\data\\output_twitter.json");
-        JSONArray jsonArray = seleniumHelper.parseringArray(f);
+        File f = new File(filePath);
+        JSONArray jsonArray = StoringHelper.parseringArray(f);
 
         WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser(options);
-        LogIn.logInTwitter("ewpumpkin", "pumpkin124@142", newBrowser);
+        LogIn.logInTwitter(newBrowser);
 
-
-        int scrollLimit = 10;
 
         int scrollCounter = 0;
 
-        while (scrollLimit > scrollCounter) {
+        while (loadLimit > scrollCounter) {
 
 
             List<WebElement> articles = browser.findElements(By.cssSelector("article[data-testid='tweet']"));
@@ -114,7 +87,7 @@ public class TwitterScraper {
                 // content.put("all", ar.getText());
                 
                 try {
-                    scrapeTwitterPost(newBrowser, link, content);
+                    scrapeArticle(newBrowser, link, content);
                     
                 } catch (TimeoutException e) {
                     System.out.println("time out");
@@ -130,11 +103,49 @@ public class TwitterScraper {
 
         }
 
-        seleniumHelper.writeJSON(jsonArray, f);
+        StoringHelper.writeJSON(jsonArray, f);
 
 
         newBrowser.quit();
         
         browser.quit();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void scrapeArticle(WebDriver newBrowser, String link, JSONObject content) {
+        System.out.println(link);
+
+        newBrowser.navigate().to(link);
+
+        Wait<WebDriver> wait = new WebDriverWait(newBrowser, Duration.ofSeconds(20));
+        String author = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[data-testid='User-Name']"))).getText();
+        System.out.println(author);
+        content.put("author", author);
+
+
+        content.put("summary", null);
+     
+
+        String post_content = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[data-testid='tweetText']"))).getText();
+        content.put("post_content", post_content);
+
+        try {
+            List<String> tags = ScrapingHelper.scrapeMultiSimilarEleCSS(newBrowser, "a[href^='/hashtag/']");
+            content.put("tags", tags);
+        } catch (NoSuchElementException e) {
+            content.put("tags", null);
+        }
+
+    }
+
+
+    public int getLoadLimit() {
+        return loadLimit;
+    }
+
+
+    public void setLoadLimit(int loadLimit) {
+        this.loadLimit = loadLimit;
     }
 }

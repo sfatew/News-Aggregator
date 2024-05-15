@@ -9,7 +9,7 @@ import org.openqa.selenium.edge.EdgeOptions;
 
 public class BrowserSetup {
     public static WebDriver setUpEdgeBrowser(){
-        System.setProperty("webdriver.edge.driver", "C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\edgedriver_win64\\msedgedriver.exe");
+        System.setProperty("webdriver.edge.driver", "C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\datacollecting\\edgedriver_win64\\msedgedriver.exe");
         
         WebDriver browser = new EdgeDriver();
 
@@ -21,7 +21,7 @@ public class BrowserSetup {
      * @return WebDriver
      */
     public static WebDriver setUpEdgeBrowser(EdgeOptions options){
-        System.setProperty("webdriver.edge.driver", "C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\edgedriver_win64\\msedgedriver.exe");
+        System.setProperty("webdriver.edge.driver", "C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\datacollecting\\edgedriver_win64\\msedgedriver.exe");
         
         WebDriver browser = new EdgeDriver(options);
 
