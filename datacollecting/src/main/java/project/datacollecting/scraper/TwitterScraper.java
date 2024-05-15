@@ -66,35 +66,40 @@ public class TwitterScraper extends Scraper{
 
 
             for (WebElement ar : articles){
-                // System.out.println(ar.getText());
-                JSONObject content = new JSONObject();
-
-
-                WebElement user = ar.findElement(By.cssSelector("div[data-testid='User-Name']"));
-                // System.out.println(user.getText());
-
-                String link =  user.findElement(By.cssSelector("a[dir='ltr']")).getAttribute("href");
-                content.put("url",link);
-
-
-                content.put("date", user.findElement(By.cssSelector("time")).getAttribute("datetime"));
-
-                content.put("post_cover", null);
-
-                content.put("title", null);
-    
-
-                // content.put("all", ar.getText());
                 
-                try {
+                try{
+                    // System.out.println(ar.getText());
+                    JSONObject content = new JSONObject();
+
+
+                    WebElement user = ar.findElement(By.cssSelector("div[data-testid='User-Name']"));
+                    // System.out.println(user.getText());
+
+                    String link =  user.findElement(By.cssSelector("a[dir='ltr']")).getAttribute("href");
+                    content.put("url",link);
+
+
+                    content.put("date", user.findElement(By.cssSelector("time")).getAttribute("datetime"));
+
+                    content.put("post_cover", null);
+
+                    content.put("title", null);
+        
+
+                    // content.put("all", ar.getText());
+                    
                     scrapeArticle(newBrowser, link, content);
                     
+                    jsonArray.add(content);
+
                 } catch (TimeoutException e) {
                     System.out.println("time out");
                     continue;
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    continue;
                 }
-                
-                jsonArray.add(content);
             }
 
             LoadMore.scroll2Load(browser);
