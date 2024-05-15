@@ -61,35 +61,41 @@ public class MediumScraper extends Scraper{
         WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser(options);
 
         for (WebElement ar : articles){
-            // System.out.println(ar.getText());
-            JSONObject content = new JSONObject();
 
-            String link = ar.findElement(By.cssSelector("div[role=\"link\"]")).getAttribute("data-href");
-            System.out.println(link);
+            try{
+                // System.out.println(ar.getText());
+                JSONObject content = new JSONObject();
 
-            content.put("url", link);
-            content.put("title", ar.findElement(By.cssSelector("h2")).getText());
+                String link = ar.findElement(By.cssSelector("div[role=\"link\"]")).getAttribute("data-href");
+                System.out.println(link);
 
-            try {
-                content.put("summary", ar.findElement(By.cssSelector("h3")).getText());
-            } catch (NoSuchElementException e) {
-                content.put("summary", null);
+                content.put("url", link);
+                content.put("title", ar.findElement(By.cssSelector("h2")).getText());
 
+                try {
+                    content.put("summary", ar.findElement(By.cssSelector("h3")).getText());
+                } catch (NoSuchElementException e) {
+                    content.put("summary", null);
+
+                }
+                
+                try {
+                    content.put("post_cover", ar.findElement(By.cssSelector("img[width=\"160\"]")).getAttribute("src"));
+                } catch (NoSuchElementException e) {
+                    content.put("post_cover", null);
+                }
+                
+
+                // content.put("all", ar.getText());
+                
+                scrapeArticle(newBrowser, link, content);
+                
+                jsonArray.add(content);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
             }
-            
-            try {
-                content.put("post_cover", ar.findElement(By.cssSelector("img[width=\"160\"]")).getAttribute("src"));
-            } catch (NoSuchElementException e) {
-                content.put("post_cover", null);
-            }
-            
-
-            // content.put("all", ar.getText());
-            
-            scrapeArticle(newBrowser, link, content);
-            
-            jsonArray.add(content);
-
         }
 
         StoringHelper.writeJSON(jsonArray, f);

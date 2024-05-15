@@ -56,40 +56,46 @@ public class WiredScraper extends Scraper{
         WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser();
 
         for (WebElement ar : articles){
-            // System.out.println(ar.getText());
-            JSONObject content = new JSONObject();
-
-            String link = ar.findElement(By.cssSelector("a[class^='SummaryItemHedLink']")).getAttribute("href");
-
-            content.put("url", link);
 
             try {
-                content.put("post_cover", ar.findElement(By.cssSelector("img")).getAttribute("src"));
-            } catch (NoSuchElementException e) {
-                content.put("post_cover", null);
+            
+                // System.out.println(ar.getText());
+                JSONObject content = new JSONObject();
+
+                String link = ar.findElement(By.cssSelector("a[class^='SummaryItemHedLink']")).getAttribute("href");
+
+                content.put("url", link);
+
+                try {
+                    content.put("post_cover", ar.findElement(By.cssSelector("img")).getAttribute("src"));
+                } catch (NoSuchElementException e) {
+                    content.put("post_cover", null);
+                }
+                
+
+                content.put("title", ar.findElement(By.cssSelector("h3")).getText());
+
+                try{
+                    content.put("author", ar.findElement(By.cssSelector("span[data-testid=\"BylineName\"]")).getText());
+                } catch (NoSuchElementException e) {
+                    content.put("author", null);
+
+                }
+
+                content.put("date", ar.findElement(By.cssSelector("time")).getText());
+
+                
+
+                // content.put("all", ar.getText());
+                
+                scrapeArticle(newBrowser, link, content);
+
+                jsonArray.add(content);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
             }
-            
-
-            content.put("title", ar.findElement(By.cssSelector("h3")).getText());
-
-            try{
-                content.put("author", ar.findElement(By.cssSelector("span[data-testid=\"BylineName\"]")).getText());
-            } catch (NoSuchElementException e) {
-                content.put("author", null);
-
-            }
-
-            content.put("date", ar.findElement(By.cssSelector("time")).getText());
-
-            
-
-            // content.put("all", ar.getText());
-            
-            scrapeArticle(newBrowser, link, content);
-
-            jsonArray.add(content);
-
-            
         }
 
         StoringHelper.writeJSON(jsonArray, f);

@@ -51,24 +51,30 @@ public class CointelegraphScraper extends Scraper{
         WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser();
 
         for (WebElement ar : articles){
-            // System.out.println(ar.getText());
-            JSONObject content = new JSONObject();
 
-            String link = ar.findElement(By.cssSelector("a")).getAttribute("href");
+            try{
+                // System.out.println(ar.getText());
+                JSONObject content = new JSONObject();
 
-            content.put("url", link);
-            content.put("title", ar.findElement(By.className("post-card-inline__title")).getText());
-            content.put("author", ar.findElement(By.className("post-card-inline__author")).getText());
-            content.put("summary", ar.findElement(By.className("post-card-inline__text")).getText());
-            content.put("date", ar.findElement(By.cssSelector("time")).getAttribute("datetime"));
+                String link = ar.findElement(By.cssSelector("a")).getAttribute("href");
 
-            // content.put("all", ar.getText());
+                content.put("url", link);
+                content.put("title", ar.findElement(By.className("post-card-inline__title")).getText());
+                content.put("author", ar.findElement(By.className("post-card-inline__author")).getText());
+                content.put("summary", ar.findElement(By.className("post-card-inline__text")).getText());
+                content.put("date", ar.findElement(By.cssSelector("time")).getAttribute("datetime"));
+
+                // content.put("all", ar.getText());
+                
+                scrapeArticle(newBrowser, link, content);
+
+                jsonArray.add(content);
             
-            scrapeArticle(newBrowser, link, content);
-
-            jsonArray.add(content);
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
             
-
         }
 
         StoringHelper.writeJSON(jsonArray, f);

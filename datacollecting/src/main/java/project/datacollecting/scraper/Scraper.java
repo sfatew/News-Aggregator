@@ -17,6 +17,26 @@ public abstract class Scraper {
 
     protected abstract void scrapeArticle(WebDriver newBrowser, String link, JSONObject content);
 
+
+    public String getArticlesListUrl() {
+        return articlesListUrl;
+    }
+
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+
+    public void setArticlesListUrl(String articlesListUrl) {
+        this.articlesListUrl = articlesListUrl;
+    }
+
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
    
 
 }
