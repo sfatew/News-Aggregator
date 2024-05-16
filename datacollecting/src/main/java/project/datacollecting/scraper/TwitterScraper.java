@@ -19,7 +19,7 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import project.datacollecting.seleniumhelper.StoringHelper;
-import project.datacollecting.seleniumhelper.BrowserSetup;
+import project.datacollecting.seleniumhelper.BrowserManager;
 import project.datacollecting.seleniumhelper.LoadMore;
 import project.datacollecting.seleniumhelper.LogIn;
 import project.datacollecting.seleniumhelper.ScrapingHelper;
@@ -35,16 +35,26 @@ public class TwitterScraper extends Scraper{
         this.loadLimit = loadLimit;
     }
 
+    @Override
+    protected WebDriver setupBrowser() {
+        EdgeOptions options = new EdgeOptions();
+        BrowserManager.setAntiAutomateDetection(options);
+
+        WebDriver browser = BrowserManager.setUpEdgeBrowser(options);
+        
+        try {
+            LogIn.logInTwitter(browser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Unable to Login");
+        }
+
+        return browser;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void scrapeArticlesList() {
-        EdgeOptions options = new EdgeOptions();
-        BrowserSetup.setAntiAutomateDetection(options);
-
-        WebDriver browser = BrowserSetup.setUpEdgeBrowser(options);
-        LogIn.logInTwitter(browser);
-        
+    public void scrape() {
 
         browser.navigate().to(articlesListUrl);
  
@@ -52,8 +62,7 @@ public class TwitterScraper extends Scraper{
         File f = new File(filePath);
         JSONArray jsonArray = StoringHelper.parseringArray(f);
 
-        WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser(options);
-        LogIn.logInTwitter(newBrowser);
+        WebDriver newBrowser = setupBrowser();
 
 
         int scrollCounter = 0;
@@ -113,7 +122,7 @@ public class TwitterScraper extends Scraper{
 
         newBrowser.quit();
         
-        browser.quit();
+        closeBrowser();
     }
 
     @SuppressWarnings("unchecked")

@@ -31,7 +31,6 @@ public class LoadMore {
             try {
                 Thread.sleep(7000);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             
@@ -69,7 +68,6 @@ public class LoadMore {
         try {
             Thread.sleep(7000);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }  
         
@@ -95,7 +93,6 @@ public class LoadMore {
                 try {
                     Thread.sleep(7000);
                 } catch (InterruptedException ex) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                             

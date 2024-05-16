@@ -38,14 +38,12 @@ public class StoringHelper {
             file = new FileWriter(f);
             file.write(jsonArray.toJSONString());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } finally{
             try {
                 file.flush();
                 file.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

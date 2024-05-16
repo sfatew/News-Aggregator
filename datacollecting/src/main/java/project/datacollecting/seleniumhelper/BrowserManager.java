@@ -7,9 +7,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 
-public class BrowserSetup {
+public class BrowserManager {
     public static WebDriver setUpEdgeBrowser(){
-        System.setProperty("webdriver.edge.driver", "C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\datacollecting\\edgedriver_win64\\msedgedriver.exe");
+        System.setProperty("webdriver.edge.driver", "datacollecting\\edgedriver_win64\\msedgedriver.exe");
         
         WebDriver browser = new EdgeDriver();
 
@@ -21,7 +21,7 @@ public class BrowserSetup {
      * @return WebDriver
      */
     public static WebDriver setUpEdgeBrowser(EdgeOptions options){
-        System.setProperty("webdriver.edge.driver", "C:\\Users\\MY LAPTOP\\OneDrive\\Documents\\GitHub\\News-Aggregator\\datacollecting\\edgedriver_win64\\msedgedriver.exe");
+        System.setProperty("webdriver.edge.driver", "datacollecting\\edgedriver_win64\\msedgedriver.exe");
         
         WebDriver browser = new EdgeDriver(options);
 
@@ -33,11 +33,12 @@ public class BrowserSetup {
      * @param proxyPort
      * @return EdgeOptions
      */
-    public static EdgeOptions setProxy(EdgeOptions option, String proxyAddress, int proxyPort){
+    public static EdgeOptions setProxy(EdgeOptions option, String proxyAddress, String proxyPort){
         Proxy proxy = new Proxy();
         proxy.setHttpProxy(proxyAddress + ":" + proxyPort);
 
         option.setCapability("proxy", proxy);
+        System.out.println("set up proxy successful");
         return option;
     }
 
