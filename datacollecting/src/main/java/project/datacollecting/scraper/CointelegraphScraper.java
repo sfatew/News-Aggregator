@@ -13,7 +13,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import project.datacollecting.seleniumhelper.BrowserSetup;
+import project.datacollecting.seleniumhelper.BrowserManager;
 import project.datacollecting.seleniumhelper.LoadMore;
 import project.datacollecting.seleniumhelper.ScrapingHelper;
 import project.datacollecting.seleniumhelper.StoringHelper;
@@ -29,11 +29,10 @@ public class CointelegraphScraper extends Scraper{
 
     @SuppressWarnings("unchecked")
     @Override
-    public void scrapeArticlesList() {
-        WebDriver browser = BrowserSetup.setUpEdgeBrowser();
-        browser.navigate().to(articlesListUrl);
+    public void scrape() {
 
- 
+        browser.navigate().to(articlesListUrl);
+        
 
         File f = new File(filePath);
         JSONArray jsonArray = StoringHelper.parseringArray(f);
@@ -48,7 +47,7 @@ public class CointelegraphScraper extends Scraper{
         
         // System.out.println(articles.size());
 
-        WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser();
+        WebDriver newBrowser = BrowserManager.setUpEdgeBrowser();
 
         for (WebElement ar : articles){
 
@@ -81,7 +80,7 @@ public class CointelegraphScraper extends Scraper{
 
         newBrowser.quit();
         
-        browser.quit();
+        closeBrowser();
     }
     
 

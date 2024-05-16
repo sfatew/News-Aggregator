@@ -19,7 +19,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import project.datacollecting.seleniumhelper.BrowserSetup;
+import project.datacollecting.seleniumhelper.BrowserManager;
+import project.datacollecting.seleniumhelper.ConfigManager;
 import project.datacollecting.seleniumhelper.LoadMore;
 import project.datacollecting.seleniumhelper.ScrapingHelper;
 import project.datacollecting.seleniumhelper.StoringHelper;
@@ -27,20 +28,28 @@ import project.datacollecting.seleniumhelper.StoringHelper;
 public class MediumScraper extends Scraper{
 
     private int loadLimit;
+    private String proxyAddress;
+    private String proxyPort;
 
-    public MediumScraper(String articlesListUrl, String filePath, int loadLimit) {
+    public MediumScraper(String articlesListUrl, String filePath, int loadLimit, ConfigManager configManager) {
         super(articlesListUrl, filePath);
         this.loadLimit = loadLimit;
+        this.proxyAddress = configManager.getProperty("proxy.proxyAddress");
+        this.proxyPort = configManager.getProperty("proxy.proxyPort");
+    }
+
+    @Override
+    protected WebDriver setupBrowser() {
+        EdgeOptions options = new EdgeOptions();
+        BrowserManager.setProxy(options, proxyAddress, proxyPort);
+
+        return BrowserManager.setUpEdgeBrowser(options);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void scrapeArticlesList() {
-        EdgeOptions options = new EdgeOptions();
-        BrowserSetup.setProxy(options, "209.146.104.56", 80);
-
-        WebDriver browser = BrowserSetup.setUpEdgeBrowser(options);
-
+    public void scrape() {
+        
         browser.navigate().to(articlesListUrl);
         // "https://medium.com/tag/blockchain/recommended"
 
@@ -58,7 +67,7 @@ public class MediumScraper extends Scraper{
         
         // System.out.println(articles.size());
 
-        WebDriver newBrowser = BrowserSetup.setUpEdgeBrowser(options);
+        WebDriver newBrowser = setupBrowser();
 
         for (WebElement ar : articles){
 
@@ -102,7 +111,7 @@ public class MediumScraper extends Scraper{
 
         newBrowser.quit();
 
-        browser.quit();
+        closeBrowser();
     }
 
     @SuppressWarnings("unchecked")

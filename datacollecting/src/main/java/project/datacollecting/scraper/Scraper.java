@@ -3,20 +3,37 @@ package project.datacollecting.scraper;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 
-public abstract class Scraper {
+import project.datacollecting.seleniumhelper.BrowserManager;
+
+public abstract class Scraper implements IScraper{
     protected String articlesListUrl;
     protected String filePath;
+    protected WebDriver browser;
 
     public Scraper(String articlesListUrl, String filePath) {
         this.articlesListUrl = articlesListUrl;
         this.filePath = filePath;
+        this.browser = setupBrowser();
     }
 
-
-    public abstract void scrapeArticlesList();
+    @Override
+    public abstract void scrape();
 
     protected abstract void scrapeArticle(WebDriver newBrowser, String link, JSONObject content);
 
+    
+    /** Default browser setup
+     * @return WebDriver
+     */
+    protected WebDriver setupBrowser() {
+        return BrowserManager.setUpEdgeBrowser();
+    }
+
+    public void closeBrowser() {
+        if (browser != null) {
+            browser.quit();
+        }
+    }
 
     public String getArticlesListUrl() {
         return articlesListUrl;
