@@ -13,16 +13,18 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LogIn {
 
-    
+    private static  ConfigManager configManager = new ConfigManager();
+
     /** 
-     * @param username  
-     * @param password
      * @param browser   browser should have Anti Automate Detection 
-     * @param url   Log in page url
      * @return WebDriver
      */
-    public static WebDriver logInTwitter(String username, String password, WebDriver browser ){
+    public static WebDriver logInTwitter(WebDriver browser){
         browser.navigate().to("https://twitter.com/i/flow/login");
+
+        
+        String username = configManager.getProperty("twitter.username");
+        String password = configManager.getProperty("twitter.password");
 
         //Find and input the username
 
@@ -43,7 +45,6 @@ public class LogIn {
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
