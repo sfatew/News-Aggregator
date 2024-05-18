@@ -6,15 +6,12 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Article {
 
+    private String id;
     private String article_link;
     private String website_source;
     private String article_type;
@@ -23,11 +20,13 @@ public class Article {
     private String detailed_content;
     private List<String> tags;
     private String author;
-    private String category;
     private String creation_date;
 
     public Article() {
 
+    }
+
+    private void setID(String id) {
     }
 
     public String getArticle_link() {
@@ -38,24 +37,12 @@ public class Article {
         this.article_link = article_link;
     }
 
-    public String getWebsite_source() {
-        return website_source;
-    }
-
     public void setWebsite_source(String website_source) {
         this.website_source = website_source;
     }
 
-    public String getArticle_type() {
-        return article_type;
-    }
-
     public void setArticle_type(String article_type) {
         this.article_type = article_type;
-    }
-
-    public String getSummary() {
-        return summary;
     }
 
     public void setSummary(String summary) {
@@ -70,40 +57,16 @@ public class Article {
         this.title = title;
     }
 
-    public String getDetailed_content() {
-        return detailed_content;
-    }
-
     public void setDetailed_content(String detailed_content) {
         this.detailed_content = detailed_content;
-    }
-
-    public List<String> getTags() {
-        return tags;
     }
 
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getCreation_date() {
-        return creation_date;
     }
 
     public void setCreation_date(String creation_date) {
@@ -111,11 +74,14 @@ public class Article {
     }
 
     private static final String TARGET_DATE_FORMAT = "yyyy-MM-dd";
-    private static final int SIMILARITY_THRESHOLD = 80; // Adjust based on desired strictness
 
 
     public static Article fromJsonObject(JsonObject jsonObject, Set<String> processedUrls, List<Article> allArticles) {
         Article article = new Article();
+
+        String id = generateUniqueId();
+        article.setID(id);
+
         if (jsonObject.has("url")) {
             article.setArticle_link(jsonObject.get("url").getAsString());
         } else {
@@ -124,13 +90,11 @@ public class Article {
         }
         // Extract website source from filename
 
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();   // Get filename using StackTrace
-        String filename = stackTraceElements[1].getFileName(); // Second element is usually the calling class
-        assert filename != null;
-        String websiteSource = extractWebsiteSourceFromFilename(filename);
+        String url = jsonObject.get("url").getAsString();
+        String websiteSource = extractWebsiteSourceFromUrl(url);
         article.setWebsite_source(websiteSource);
-        // Fill in logic to determine article type based on member 2's logic (replace 2 with appropriate value)
         article.setArticle_type(determineArticleType(String.valueOf(jsonObject)));
+
         if (jsonObject.has("summary")) {
             // Check if "summary" field exists and is not JsonNull
             JsonElement summaryElement = jsonObject.get("summary");
@@ -228,17 +192,17 @@ public class Article {
 
 
         // Check for duplicate URL
-        String url = article.getArticle_link();
-        if (processedUrls.contains(url)) {
-            System.out.println("Skipping duplicate article (URL): " + url);
+        String dup_url = article.getArticle_link();
+        if (processedUrls.contains(dup_url)) {
+            System.out.println("Skipping duplicate article (URL): " + dup_url);
             return null; // Or perform some other action (e.g., logging)
         }
-        processedUrls.add(url);
+        processedUrls.add(dup_url);
 
         // Optional: Check for duplicate content (if content similarity is desired)
-        boolean isDuplicate = checkContentSimilarity(article.getTitle().toLowerCase(), allArticles);
+        boolean isDuplicate = article.getTitle() != null && checkContentSimilarity(article.getTitle().toLowerCase(), allArticles);
         if (isDuplicate) {
-            System.out.println("Found potential duplicate based on content (URL: " + url + ")");
+            System.out.println("Found potential duplicate based on content (URL: " + dup_url + ")");
             // You can decide how to handle potential content duplicates here (e.g., ignore, log further details)
             return null; // Or perform some other action (e.g., return existing article)
         }
@@ -247,25 +211,7 @@ public class Article {
     }
 
 
-    private void setTags(JsonArray asJsonArray) {
-    }
 
-    private static String extractWebsiteSourceFromFilename(String filename) {
-        // Implement logic to extract website source from filename (e.g., using string manipulation)
-        // You can use regular expressions or string splitting based on patterns in your filenames
-        // For example:
-        if (filename.contains("output_cointelegraph.json")) {
-            return "Cointelegraph";
-        } else if (filename.contains("output_wired.json")) {
-            return "Wired";
-        } else if (filename.contains("output_medium.json")) {
-            return "Medium";
-        } else if (filename.contains("output_twitter.json")) {
-            return "Twitter";
-        } else {
-            return "Unknown"; // Default website source
-        }
-    }
 
     private static List<String> extractTags(JsonArray tagsArray) {
         List<String> tags = new ArrayList<>();
@@ -276,16 +222,28 @@ public class Article {
     }
 
     // Add a method to determine article type based on member 2's logic (replace with actual implementation)
-    private static String determineArticleType(String websiteSource) {
-        if (websiteSource.equals("Cointelegraph") || websiteSource.equals("Wired")) {
-            return "News Article";
-        } else if (websiteSource.equals("Medium")) {
-            return "Blog Post";
-        } else if (websiteSource.equals("Twitter")) {
-            return "Tweet";
+    private static String extractWebsiteSourceFromUrl(String url) {
+        if (url.contains("twitter.com")) {
+            return "Twitter";
+        } else if (url.contains("cointelegraph.com")) {
+            return "Cointelegraph";
+        } else if (url.contains("medium.com")) {
+            return "Medium";
+        } else if (url.contains("wired.com")) {
+            return "Wired";
         } else {
-            return "Unknown"; // Default article type
+            return "Unknown"; // Default website source
         }
+    }
+
+    private static String determineArticleType(String url) {
+        String websiteSource = extractWebsiteSourceFromUrl(url);
+        return switch (websiteSource) {
+            case "Twitter" -> "Tweet";
+            case "Cointelegraph", "Wired" -> "News Article";
+            case "Medium" -> "Blog Post";
+            default -> "Unknown"; // Default article type
+        };
     }
 
     private static boolean checkContentSimilarity(String title, List<Article> allArticles) {
@@ -304,10 +262,17 @@ public class Article {
         return false; // No significant title similarity found
     }
 
+    private static String generateUniqueId() {
+        // Option 1: Use a UUID (Universally Unique Identifier)
+        return UUID.randomUUID().toString();  // This generates a random string ID
+
+    }
+
 
     // Add a constructor to allow creating Article objects directly
-    public Article(String article_link, String website_source, String article_type, String summary, String title,
-                   String detailed_content, List<String> tags, String author, String category, String creation_date) {
+    public Article(String id, String article_link, String website_source, String article_type, String summary, String title,
+                   String detailed_content, List<String> tags, String author, String creation_date) {
+        this.id = id;
         this.article_link = article_link;
         this.website_source = website_source;
         this.article_type = article_type;
@@ -316,7 +281,7 @@ public class Article {
         this.detailed_content = detailed_content;
         this.tags = tags;
         this.author = author;
-        this.category = category;
         this.creation_date = creation_date;
     }
+
 }
