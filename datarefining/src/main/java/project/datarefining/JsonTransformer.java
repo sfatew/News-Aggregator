@@ -14,18 +14,18 @@ import java.util.Set;
 
 public class JsonTransformer {
 
-    public static List<Article> transformArticles(String filePath1, String filePath2, String filePath3) throws IOException {
+    public static List<Article> transformArticles(String filePath1, String filePath2, String filePath3, String filePath4) throws IOException {
         List<Article> articles = new ArrayList<>();
-
+        List<Article> allArticles = new ArrayList<>(); // Create the list here
         // Read JSON files from member 1
-        articles.addAll(readArticlesFromFile(filePath1, new HashSet<String>())); // Create new processedUrls set
-        articles.addAll(readArticlesFromFile(filePath2, new HashSet<String>()));
-        articles.addAll(readArticlesFromFile(filePath3, new HashSet<String>()));
-
+        articles.addAll(readArticlesFromFile(filePath1, new HashSet<String>(), allArticles)); //create new processed set
+        articles.addAll(readArticlesFromFile(filePath2, new HashSet<String>(), allArticles));
+        articles.addAll(readArticlesFromFile(filePath3, new HashSet<String>(), allArticles));
+        articles.addAll(readArticlesFromFile(filePath4, new HashSet<String>(), allArticles));
         return articles;
     }
 
-    private static List<Article> readArticlesFromFile(String filePath, Set<String> processedUrls) throws IOException {
+    private static List<Article> readArticlesFromFile(String filePath, Set<String> processedUrls, List<Article> allArticles) throws IOException {
         List<Article> articles = new ArrayList<>();
         Gson gson = new Gson();
 
@@ -34,7 +34,7 @@ public class JsonTransformer {
         reader.close();
 
         for (JsonElement element : jsonArray) {
-            Article article = Article.fromJsonObject(element.getAsJsonObject(), processedUrls);
+            Article article = Article.fromJsonObject(element.getAsJsonObject(), processedUrls, allArticles);
             if (article != null) {
                 articles.add(article);
             }

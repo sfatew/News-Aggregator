@@ -13,14 +13,18 @@ public class Main {
         String filePath1 = "data/output_cointelegraph.json";   // Replace with actual file paths
         String filePath2 = "data/output_medium.json";
         String filePath3 = "data/output_wired.json";
+        String filePath4 = "data/output_twitter.json";
 
-        List<Article> articles = JsonTransformer.transformArticles(filePath1, filePath2, filePath3);
+        List<Article> articles = JsonTransformer.transformArticles(filePath1, filePath2, filePath3, filePath4);
 
         Gson gson = new Gson();
         String finalJson = gson.toJson(articles);
 
-        // Write the final JSON to a file (optional)
-        Writer writer = new FileWriter("data/final_articles.json");
+        // Specify the desired path for the output file (replace with your actual path)
+        String outputFilePath = "/Users/mac/Desktop/final_articles.json";
+
+        // Write the final JSON to the specified file
+        Writer writer = new FileWriter(outputFilePath);
         writer.write(finalJson);
         writer.close();
 
