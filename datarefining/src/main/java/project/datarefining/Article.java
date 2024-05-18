@@ -11,7 +11,7 @@ import java.util.*;
 
 public class Article {
 
-    private String id;
+    public String id;
     private String article_link;
     private String website_source;
     private String article_type;
@@ -27,6 +27,7 @@ public class Article {
     }
 
     private void setID(String id) {
+        this.id = id;
     }
 
     public String getArticle_link() {
