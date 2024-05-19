@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Refining {
 
-    public static void main(String[] args) throws IOException {
+    public static void refining() throws IOException {
 
         Scraping.main(args);
 
