@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Refining {
 
-    public static void main(String[] args) throws IOException {
+    public static void refining() throws IOException {
 
         String filePath1 = "data\\output_cointelegraph.json";   // Replace with actual file paths
         String filePath2 = "data\\output_medium.json";

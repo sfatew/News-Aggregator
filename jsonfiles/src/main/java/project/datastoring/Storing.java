@@ -1,8 +1,8 @@
 package project.datastoring;
 
-public class Main {
+public class Storing {
 
-        public static void main(String[] args) {
+        public static void storing() {
             CreateJSONFile createJSONFile = new CreateJSONFile("C:\\Users\\MY LAPTOP\\Downloads\\JSONFilesStorage\\");
             createJSONFile.createJSONFiles();
         }

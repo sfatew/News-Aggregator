@@ -9,7 +9,7 @@ import project.datacollecting.seleniumhelper.ConfigManager;
 
 public class Scraping {
 
-        public static void main(String[] args) {
+        public static void scraping() {
 
             ConfigManager configManager = new ConfigManager();
             
