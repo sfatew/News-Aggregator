@@ -18,7 +18,7 @@ public class ConfigManager {
 
     public ConfigManager() {
         properties = new Properties();
-        try (FileInputStream input = new FileInputStream("datacollecting\\src\\main\\java\\project\\datacollecting\\resources\\config.properties")) {
+        try (FileInputStream input = new FileInputStream("E:\\University\\Kì 2023.2\\OOP\\Project\\News-Aggregator(1)\\datacollecting\\src\\main\\java\\project\\datacollecting\\resources\\config.properties")) {
             properties.load(input);
         } catch (IOException e) {
             e.printStackTrace();

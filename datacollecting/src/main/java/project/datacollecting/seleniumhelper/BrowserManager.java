@@ -9,7 +9,7 @@ import org.openqa.selenium.edge.EdgeOptions;
 
 public class BrowserManager {
     public static WebDriver setUpEdgeBrowser(){
-        System.setProperty("webdriver.edge.driver", "datacollecting\\edgedriver_win64\\msedgedriver.exe");
+        System.setProperty("webdriver.edge.driver", "edgedriver_win64\\msedgedriver.exe");
         
         WebDriver browser = new EdgeDriver();
 
@@ -21,7 +21,7 @@ public class BrowserManager {
      * @return WebDriver
      */
     public static WebDriver setUpEdgeBrowser(EdgeOptions options){
-        System.setProperty("webdriver.edge.driver", "datacollecting\\edgedriver_win64\\msedgedriver.exe");
+        System.setProperty("webdriver.edge.driver", "edgedriver_win64\\msedgedriver.exe");
         
         WebDriver browser = new EdgeDriver(options);
 

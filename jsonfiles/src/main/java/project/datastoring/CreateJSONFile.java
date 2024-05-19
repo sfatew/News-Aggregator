@@ -15,7 +15,7 @@ public class CreateJSONFile {
 
 
 	public CreateJSONFile(String outputDirectory) {
-		this.inputFilePath = "data\\final_articles.json";
+		this.inputFilePath = "E:\\University\\Kì 2023.2\\OOP\\Project\\News-Aggregator(1)\\data\\final_articles.json";
 		this.outputDirectory = outputDirectory;
 	}
 
