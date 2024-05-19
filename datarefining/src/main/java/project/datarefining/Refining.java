@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-public class Main {
+public class Refining {
 
     public static void main(String[] args) throws IOException {
 
