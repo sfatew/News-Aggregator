@@ -12,8 +12,6 @@ public class Refining {
 
     public static void refining() throws IOException {
 
-        Scraping.scraping();
-
         String filePath1 = "data\\output_cointelegraph.json";   // Replace with actual file paths
         String filePath2 = "data\\output_medium.json";
         String filePath3 = "data\\output_wired.json";
