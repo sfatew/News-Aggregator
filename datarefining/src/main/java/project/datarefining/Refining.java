@@ -12,7 +12,7 @@ public class Refining {
 
     public static void refining() throws IOException {
 
-        Scraping.main(args);
+        Scraping.scraping();
 
         String filePath1 = "data\\output_cointelegraph.json";   // Replace with actual file paths
         String filePath2 = "data\\output_medium.json";
