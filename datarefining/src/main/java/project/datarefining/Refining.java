@@ -1,6 +1,7 @@
 package project.datarefining;
 
 import com.google.gson.Gson;
+import project.datacollecting.Scraping;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.List;
 public class Refining {
 
     public static void main(String[] args) throws IOException {
+
+        Scraping.main(args);
 
         String filePath1 = "data\\output_cointelegraph.json";   // Replace with actual file paths
         String filePath2 = "data\\output_medium.json";
