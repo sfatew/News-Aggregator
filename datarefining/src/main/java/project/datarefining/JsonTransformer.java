@@ -18,10 +18,10 @@ public class JsonTransformer {
         List<Article> articles = new ArrayList<>();
         List<Article> allArticles = new ArrayList<>(); // Create the list here
         // Read JSON files from member 1
-        articles.addAll(readArticlesFromFile(filePath1, new HashSet<String>(), allArticles)); //create new processed set
-        articles.addAll(readArticlesFromFile(filePath2, new HashSet<String>(), allArticles));
-        articles.addAll(readArticlesFromFile(filePath3, new HashSet<String>(), allArticles));
-        articles.addAll(readArticlesFromFile(filePath4, new HashSet<String>(), allArticles));
+        articles.addAll(readArticlesFromFile(filePath1, new HashSet<>(), allArticles)); //create new processed set
+        articles.addAll(readArticlesFromFile(filePath2, new HashSet<>(), allArticles));
+        articles.addAll(readArticlesFromFile(filePath3, new HashSet<>(), allArticles));
+        articles.addAll(readArticlesFromFile(filePath4, new HashSet<>(), allArticles));
         return articles;
     }
 

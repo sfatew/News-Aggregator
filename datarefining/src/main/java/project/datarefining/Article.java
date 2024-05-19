@@ -38,6 +38,10 @@ public class Article {
         this.article_link = article_link;
     }
 
+    private String getWebsite_source() {
+        return website_source;
+    }
+
     public void setWebsite_source(String website_source) {
         this.website_source = website_source;
     }
@@ -64,6 +68,10 @@ public class Article {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    private String getAuthor() {
+        return author;
     }
 
     public void setAuthor(String author) {
@@ -110,24 +118,13 @@ public class Article {
             article.setSummary(null); // Set summary to null if "summary" field is missing altogether
             System.err.println("Missing summary for article: " + jsonObject); // Or log a warning (optional)
         }
-        if (jsonObject.has("title")) {
-            // Check if "title" field exists and is not JsonNull
-            JsonElement titleElement = jsonObject.get("title");
-            if (titleElement != JsonNull.INSTANCE) {
-                String title = titleElement.getAsString();
-                article.setTitle(title);
-            } else {
-                article.setTitle(null); // Set title to null if "title" field is missing or JsonNull
-                System.err.println("Missing title for article: " + jsonObject); // Or log a warning (optional)
-            }
-        } else {
-            article.setTitle(null); // Set title to null if "title" field is missing altogether
-            System.err.println("Missing title for article: " + jsonObject); // Or log a warning (optional)
-        }
+
+
 
         if (jsonObject.has("post_content")) {
             article.setDetailed_content(jsonObject.get("post_content").getAsString());
         }
+
         if (jsonObject.has("tags")) {
             JsonElement tagsElement = jsonObject.get("tags");
             if (tagsElement.isJsonArray()) {
@@ -141,9 +138,30 @@ public class Article {
         } else {
             article.setTags(new ArrayList<>());
         }
+
         if (jsonObject.has("author")) {
-            String author = jsonObject.get("author") != JsonNull.INSTANCE ? jsonObject.get("author").getAsString() : null;
-            article.setAuthor(author);
+            String extractedAuthor = jsonObject.get("author") != JsonNull.INSTANCE ? jsonObject.get("author").getAsString() : null;
+            article.setAuthor(extractedAuthor);
+        }
+
+        if (jsonObject.has("title")) {
+            // Check if "title" field exists and is not JsonNull
+            JsonElement titleElement = jsonObject.get("title");
+            if (titleElement != JsonNull.INSTANCE) {
+                String title = titleElement.getAsString();
+                article.setTitle(title);
+            } else {
+                // Set title to "Tweet from" + author if title is missing
+                if ("Twitter".equals(article.getWebsite_source())) {
+                    article.setTitle("Tweet from " + article.getAuthor());
+                } else {
+                    article.setTitle(null); // Set title to null for non-Twitter sources
+                    System.err.println("Missing title for article: " + jsonObject); // Or log a warning (optional)
+                }
+            }
+        } else {
+            article.setTitle(null); // Set title to null if "title" field is missing or JsonNull
+            System.err.println("Missing title for article: " + jsonObject); // Or log a warning (optional)
         }
 
         if (jsonObject.has("date")) {
@@ -210,9 +228,6 @@ public class Article {
 
         return article;
     }
-
-
-
 
     private static List<String> extractTags(JsonArray tagsArray) {
         List<String> tags = new ArrayList<>();
