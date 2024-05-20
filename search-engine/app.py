@@ -9,7 +9,7 @@ app = Flask(__name__)
 es = Search()
 
 
-@app.get('/TagsList') #for java client take date
+@app.get('/TagsList') #for java client take data
 def TagsList(size = 800, from_ = 0):
     search_results, aggs = search(query='', size=size, from_=from_)
     results = []
