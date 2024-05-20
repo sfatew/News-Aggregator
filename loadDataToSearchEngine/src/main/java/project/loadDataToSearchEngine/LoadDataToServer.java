@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 
-public class App {
+public class LoadDataToServer {
     public static void loadToServer() {
         gitPushDataFile();        
         reloadData();
