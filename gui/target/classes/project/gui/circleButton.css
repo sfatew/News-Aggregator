@@ -1,5 +1,0 @@
-.circle-button {
-    -fx-background-radius: 50em; /* Làm tròn nút thành hình tròn */
-    -fx-min-width: 10px; /* Thiết lập kích thước của nút */
-    -fx-min-height: 10px;
-}
