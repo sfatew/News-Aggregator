@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h2>{{ title }}</h2>
+    <p>Article link: <a href="{{ url }}" >link</a> </p>
+    {% for paragraph in paragraphs %}
+        <p>{{ paragraph }}</p>
+    {% endfor %}
+    <button onclick="history.back()">Go Back</button>
+</div>
+{% endblock %}

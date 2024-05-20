@@ -1,0 +1,38 @@
+[
+    {
+      "article_link": "https://cointelegraph.com/news/decentralizing-video-production-the-impact-of-blockchain-and-generative-ai",
+      "website_source": "Cointelegraph",
+      "article_type": 2, 
+      "summary": "Generative AI is transforming the streaming landscape...",
+      "title": "Decentralizing video production: The impact of blockchain and generative AI",
+      "detailed_content": "", 
+      "tags": ["blockchain", "generative AI", "video production"],
+      "author": "by Mike Kara",
+      "category" : ""
+    },
+    {
+      "article_link": "https://cointelegraph.com/news/trader-loses-68-million-address-poisoning-scam",
+      "website_source": "Cointelegraph",
+      "article_type": 2, 
+      "summary": "The attack caused the unknown trader to lose over 97%...",
+      "title": "Trader loses $68M in address poisoning scam",
+      "detailed_content": "", 
+      "creation_date": "2024-05-03",
+      "tags": ["scam", "cryptocurrency", "address poisoning"],
+      "author": "by Zoltan Vardai",
+      "category" : ""
+    },
+    {
+      "article_link": "",
+      "website_source": "", 
+      "article_type": 0, 
+      "summary": "", 
+      "title": "",
+      "detailed_content": "", 
+      "creation_date": "", 
+      "tags": [], 
+      "author": "" ,
+      "category" : "" 
+    }
+  ]
+  
