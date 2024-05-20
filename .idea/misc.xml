@@ -6,7 +6,17 @@
       <list>
         <option value="$PROJECT_DIR$/datacollecting/pom.xml" />
         <option value="$PROJECT_DIR$/datarefining/pom.xml" />
+        <option value="$PROJECT_DIR$/project.dataanalysis/pom.xml" />
+        <option value="$PROJECT_DIR$/dataanalysis/pom.xml" />
+        <option value="$PROJECT_DIR$/gui/pom.xml" />
+        <option value="$PROJECT_DIR$/project.datastoring/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/project.dataanalysis/pom.xml" />
+        <option value="$PROJECT_DIR$/project.datastoring/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="temurin-21" project-jdk-type="JavaSDK">

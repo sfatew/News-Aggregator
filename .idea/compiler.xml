@@ -6,9 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="datacollecting" />
         <module name="datarefining" />
+        <module name="gui" />
+        <module name="datacollecting" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="jsonfiles" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>

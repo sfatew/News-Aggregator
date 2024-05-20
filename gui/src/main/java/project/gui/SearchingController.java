@@ -30,6 +30,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import static project.datacollecting.Scraping.scraping;
+import static project.datarefining.Refining.refining;
+
 
 public class SearchingController extends Application {
 
@@ -278,8 +281,11 @@ public class SearchingController extends Application {
 		}
 	}
 
-	public void updateData(){
-		datacollecting.scraping();
+	public void updateData() throws IOException {
+
+		scraping();
+		refining();
+		storing();
 	}
 
 	@Override
