@@ -13,7 +13,8 @@ public class LoadDataToServer {
     }
 
     public static void gitPushDataFile() {
-        String batDirectory = new File(System.getProperty("user.dir")).getParent();
+        String batDirectory = "C:\\Coding\\News-Aggregator\\newsaggregator"; //change this path to local path from local machine
+        //this is relative Path: new File(System.getProperty("user.dir")).getParent();
 
         // Path to the batch file
         String batFilePath = batDirectory + "\\reload-data-from-local-machine.bat";

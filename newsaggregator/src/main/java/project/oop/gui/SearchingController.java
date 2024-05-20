@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import project.oop.datadealing.datarefining.Refining;
 import project.oop.datadealing.datacollecting.Scraping;
 import project.oop.datadealing.datastoring.Storing;
+import project.oop.loadDataToSearchEngine.LoadDataToServer;
 
 
 public class SearchingController extends Application {
@@ -287,6 +288,7 @@ public class SearchingController extends Application {
 			Scraping.scraping();
 			Refining.refining();
 			Storing.storing();
+			LoadDataToServer.loadToServer();
 
 		} catch(Exception e){
 			System.out.println("EXCEPTION");
