@@ -1,15 +1,17 @@
 package project.datarefining;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static project.datarefining.ParsingHelper.*;
+import static project.datarefining.parsing.ContentSimilarityChecker.checkContentSimilarity;
+import static project.datarefining.parsing.IdGenerator.generateUniqueId;
+import static project.datarefining.parsing.SourceParser.extractWebsiteSourceFromUrl;
+import static project.datarefining.parsing.TagsParser.extractTags;
+import static project.datarefining.parsing.TypeParser.determineArticleType;
 
 public class Article {
 
