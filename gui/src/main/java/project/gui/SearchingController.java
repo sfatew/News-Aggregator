@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import static project.datacollecting.Scraping.scraping;
 import static project.datarefining.Refining.refining;
 import static project.datastoring.Storing.storing;
+import static project.loadDataToSearchEngine.App.loadToServer;
 
 
 public class SearchingController extends Application {
@@ -287,6 +288,7 @@ public class SearchingController extends Application {
 		scraping();
 		refining();
 		storing();
+		loadToServer();
 	}
 
 	@Override

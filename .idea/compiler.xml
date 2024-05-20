@@ -9,8 +9,12 @@
         <module name="datarefining" />
         <module name="gui" />
         <module name="jsonfiles" />
+        <module name="loadDataToSearchEngine" />
         <module name="datacollecting" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="load-data-to-search-engine" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
