@@ -1,0 +1,8 @@
+.list-view .scroll-bar:horizontal, .list-view .scroll-bar:vertical {
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+.list-cell {
+    -fx-font-size: 18px; /* Thay đổi cỡ chữ */
+    -fx-font-family: "Calibri"; /* Thay đổi font */
+}

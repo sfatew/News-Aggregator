@@ -1,7 +1,6 @@
 package project.datarefining;
 
 import com.google.gson.Gson;
-import project.datacollecting.Scraping;
 
 import java.io.FileWriter;
 import java.io.IOException;
