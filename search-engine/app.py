@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 from search import Search
 import re
 import json
-from urllib.parse import unquote
+from urllib.parse import unquote, quote
 
 
 app = Flask(__name__)
 es = Search()
+
 
 @app.get('/TagsList') #for java client take date
 def TagsList(size = 800, from_ = 0):
@@ -76,6 +77,13 @@ def handle_search():
                            query=query, size = size, from_=from_,
                            total=results['hits']['total']['value'], aggs = aggs)
     
+@app.route('/reloadDataFromJava', methods=['GET'])
+def reloadDataFromJava():
+    """Regenerate the Elasticsearch index."""
+    response = es.reindex("my_documents")
+    reindex_status = 'Index with '+ str(len(response["items"])) + ' documents created in ' + str(response["took"]) + ' milliseconds.'
+    return reindex_status
+
 @app.route('/reindex', methods=['GET'])
 def reindex():
     """Regenerate the Elasticsearch index."""
