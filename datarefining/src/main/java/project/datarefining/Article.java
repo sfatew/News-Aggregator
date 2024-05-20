@@ -1,15 +1,17 @@
 package project.datarefining;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static project.datarefining.ParsingHelper.*;
+import static project.datarefining.parsing.ContentSimilarityChecker.checkContentSimilarity;
+import static project.datarefining.parsing.IdGenerator.generateUniqueId;
+import static project.datarefining.parsing.SourceParser.extractWebsiteSourceFromUrl;
+import static project.datarefining.parsing.TagsParser.extractTags;
+import static project.datarefining.parsing.TypeParser.determineArticleType;
 
 public class Article {
 
@@ -24,157 +26,80 @@ public class Article {
     private String author;
     private String creation_date;
 
-    public Article() {
-
-    }
-
-    private void setID(String id) {
-        this.id = id;
-    }
-
-    public String getArticle_link() {
-        return article_link;
-    }
-
-    public void setArticle_link(String article_link) {
-        this.article_link = article_link;
-    }
-
-    private String getWebsite_source() {
-        return website_source;
-    }
-
-    public void setWebsite_source(String website_source) {
-        this.website_source = website_source;
-    }
-
-    public void setArticle_type(String article_type) {
-        this.article_type = article_type;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDetailed_content(String detailed_content) {
-        this.detailed_content = detailed_content;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    private String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setCreation_date(String creation_date) {
-        this.creation_date = creation_date;
-    }
-
     private static final String TARGET_DATE_FORMAT = "yyyy-MM-dd";
 
+    // Default constructor
+    public Article() {}
 
-    public static Article fromJsonObject(JsonObject jsonObject, Set<String> processedUrls, List<Article> allArticles) {
-        Article article = new Article();
-
-        String id = generateUniqueId();
-        article.setID(id);
-
+    // Constructor to populate Article fields from JsonObject
+    public Article(JsonObject jsonObject, Set<String> processedUrls, List<Article> allArticles) {
+        this.id = generateUniqueId();
+        
         if (jsonObject.has("url")) {
-            article.setArticle_link(jsonObject.get("url").getAsString());
+            this.article_link = jsonObject.get("url").getAsString();
         } else {
-            // Handle missing article link (e.g., assign a default value, log a warning)
             System.err.println("Missing article link for article: " + jsonObject);
         }
-        // Extract website source from filename
 
         String url = jsonObject.get("url").getAsString();
-        String websiteSource = extractWebsiteSourceFromUrl(url);
-        article.setWebsite_source(websiteSource);
-        article.setArticle_type(determineArticleType(String.valueOf(jsonObject)));
+        this.website_source = extractWebsiteSourceFromUrl(url);
+        this.article_type = determineArticleType(String.valueOf(jsonObject));
 
         if (jsonObject.has("summary")) {
-            // Check if "summary" field exists and is not JsonNull
             JsonElement summaryElement = jsonObject.get("summary");
-            if (summaryElement != JsonNull.INSTANCE) {
-                String summary = summaryElement.getAsString();
-                article.setSummary(summary);
-            } else {
-                article.setSummary(null); // Set summary to null if "summary" field is missing or JsonNull
-                System.err.println("Missing summary for article: " + jsonObject); // Or log a warning (optional)
+            this.summary = summaryElement != JsonNull.INSTANCE ? summaryElement.getAsString() : null;
+            if (this.summary == null) {
+                System.err.println("Missing summary for article: " + jsonObject);
             }
         } else {
-            article.setSummary(null); // Set summary to null if "summary" field is missing altogether
-            System.err.println("Missing summary for article: " + jsonObject); // Or log a warning (optional)
+            this.summary = null;
+            System.err.println("Missing summary for article: " + jsonObject);
         }
 
-
-
         if (jsonObject.has("post_content")) {
-            article.setDetailed_content(jsonObject.get("post_content").getAsString());
+            this.detailed_content = jsonObject.get("post_content").getAsString();
         }
 
         if (jsonObject.has("tags")) {
             JsonElement tagsElement = jsonObject.get("tags");
             if (tagsElement.isJsonArray()) {
-                article.setTags(extractTags(tagsElement.getAsJsonArray()));
+                this.tags = extractTags(tagsElement.getAsJsonArray());
             } else {
-                // Handle the case where tags is a single string
-                List<String> tagsList = new ArrayList<>();
-                tagsList.add(tagsElement.getAsString());
-                article.setTags(tagsList);
+                this.tags = new ArrayList<>();
+                this.tags.add(tagsElement.getAsString());
             }
         } else {
-            article.setTags(new ArrayList<>());
+            this.tags = new ArrayList<>();
         }
 
         if (jsonObject.has("author")) {
-            String extractedAuthor = jsonObject.get("author") != JsonNull.INSTANCE ? jsonObject.get("author").getAsString() : null;
-            article.setAuthor(extractedAuthor);
+            this.author = jsonObject.get("author") != JsonNull.INSTANCE ? jsonObject.get("author").getAsString() : null;
         }
 
         if (jsonObject.has("title")) {
-            // Check if "title" field exists and is not JsonNull
             JsonElement titleElement = jsonObject.get("title");
             if (titleElement != JsonNull.INSTANCE) {
-                String title = titleElement.getAsString();
-                article.setTitle(title);
+                this.title = titleElement.getAsString();
             } else {
-                // Set title to "Tweet from" + author if title is missing
-                if ("Twitter".equals(article.getWebsite_source())) {
-                    article.setTitle("Tweet from " + article.getAuthor());
+                if ("Twitter".equals(this.website_source)) {
+                    this.title = "Tweet from " + this.author;
                 } else {
-                    article.setTitle(null); // Set title to null for non-Twitter sources
-                    System.err.println("Missing title for article: " + jsonObject); // Or log a warning (optional)
+                    this.title = null;
+                    System.err.println("Missing title for article: " + jsonObject);
                 }
             }
         } else {
-            article.setTitle(null); // Set title to null if "title" field is missing or JsonNull
-            System.err.println("Missing title for article: " + jsonObject); // Or log a warning (optional)
+            this.title = null;
+            System.err.println("Missing title for article: " + jsonObject);
         }
 
         if (jsonObject.has("date")) {
-            // Check if "date" field exists and is not JsonNull
             JsonElement dateElement = jsonObject.get("date");
             if (dateElement != JsonNull.INSTANCE) {
                 String dateString = dateElement.getAsString();
                 SimpleDateFormat sourceDateFormat;
 
-                // Initialize sourceDateFormat based on websiteSource
-                switch (websiteSource) {
+                switch (this.website_source) {
                     case "Cointelegraph":
                         sourceDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         break;
@@ -188,63 +113,85 @@ public class Article {
                         sourceDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                         break;
                     default:
-                        // Handle unknown website source format (e.g., log error)
-                        System.err.println("Unknown date format for website: " + websiteSource);
-                        article.setCreation_date(null); // Set creation date to null if format unknown
-                        return article; // Or throw an exception (optional)
+                        System.err.println("Unknown date format for website: " + this.website_source);
+                        this.creation_date = null;
+                        return;
                 }
 
                 try {
                     Date parsedDate = sourceDateFormat.parse(dateString);
-
-                    // Format the date to the target format
                     SimpleDateFormat targetDateFormat = new SimpleDateFormat(TARGET_DATE_FORMAT);
-                    String formattedDate = targetDateFormat.format(parsedDate);
-                    article.setCreation_date(formattedDate);
+                    this.creation_date = targetDateFormat.format(parsedDate);
                 } catch (java.text.ParseException e) {
-                    // Handle parsing exception (e.g., invalid date format, logging error)
-                    System.err.println("Error parsing date for " + websiteSource + ": " + dateString);
-                    article.setCreation_date(null); // Set creation date to null on parsing error
+                    System.err.println("Error parsing date for " + this.website_source + ": " + dateString);
+                    this.creation_date = null;
                 }
             } else {
-                article.setCreation_date(null); // Set creation date to null if "date" field is missing or JsonNull
+                this.creation_date = null;
             }
         }
 
-
-        // Check for duplicate URL
-        String dup_url = article.getArticle_link();
+        String dup_url = this.article_link;
         if (processedUrls.contains(dup_url)) {
             System.out.println("Skipping duplicate article (URL): " + dup_url);
-            return null; // Or perform some other action (e.g., logging)
+            return;
         }
         processedUrls.add(dup_url);
 
-        // Optional: Check for duplicate content (if content similarity is desired)
-        boolean isDuplicate = article.getTitle() != null && checkContentSimilarity(article.getTitle().toLowerCase(), allArticles);
+        boolean isDuplicate = this.title != null && checkContentSimilarity(this.title.toLowerCase(), allArticles);
         if (isDuplicate) {
             System.out.println("Found potential duplicate based on content (URL: " + dup_url + ")");
-            // You can decide how to handle potential content duplicates here (e.g., ignore, log further details)
-            return null; // Or perform some other action (e.g., return existing article)
+            return;
         }
+    }
 
+    // Getter methods
+    public String getId() {
+        return id;
+    }
+
+    public String getArticle_link() {
+        return article_link;
+    }
+
+    public String getWebsite_source() {
+        return website_source;
+    }
+
+    public String getArticle_type() {
+        return article_type;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDetailed_content() {
+        return detailed_content;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getCreation_date() {
+        return creation_date;
+    }
+
+    // Static method to create Article from JsonObject
+    public static Article fromJsonObject(JsonObject jsonObject, Set<String> processedUrls, List<Article> allArticles) {
+        Article article = new Article(jsonObject, processedUrls, allArticles);
+        if (article.getArticle_link() == null || processedUrls.contains(article.getArticle_link())) {
+            return null;
+        }
         return article;
     }
-
-
-    // Add a constructor to allow creating Article objects directly
-    public Article(String id, String article_link, String website_source, String article_type, String summary, String title,
-                   String detailed_content, List<String> tags, String author, String creation_date) {
-        this.id = id;
-        this.article_link = article_link;
-        this.website_source = website_source;
-        this.article_type = article_type;
-        this.summary = summary;
-        this.title = title;
-        this.detailed_content = detailed_content;
-        this.tags = tags;
-        this.author = author;
-        this.creation_date = creation_date;
-    }
-
 }
