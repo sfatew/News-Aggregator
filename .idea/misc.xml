@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/dataanalysis/pom.xml" />
         <option value="$PROJECT_DIR$/gui/pom.xml" />
         <option value="$PROJECT_DIR$/project.datastoring/pom.xml" />
+        <option value="$PROJECT_DIR$/jsonfiles/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

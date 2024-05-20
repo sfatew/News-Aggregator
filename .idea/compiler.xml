@@ -8,11 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="datarefining" />
         <module name="gui" />
+        <module name="jsonfiles" />
         <module name="datacollecting" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="jsonfiles" target="21" />
-    </bytecodeTargetLevel>
   </component>
 </project>

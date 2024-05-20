@@ -32,6 +32,7 @@ import javafx.stage.Stage;
 
 import static project.datacollecting.Scraping.scraping;
 import static project.datarefining.Refining.refining;
+import static project.datastoring.Storing.storing;
 
 
 public class SearchingController extends Application {
